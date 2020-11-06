@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_3" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.3">
+	<Header>
+		<Application name="JPMML-R" version="1.3.15"/>
+		<Timestamp>2020-11-06T00:46:59Z</Timestamp>
+	</Header>
+	<DataDictionary>
+		<DataField name="weight_pounds" optype="continuous" dataType="double"/>
+		<DataField name="year" optype="continuous" dataType="double"/>
+		<DataField name="plurality" optype="continuous" dataType="double"/>
+		<DataField name="apgar_5min" optype="continuous" dataType="double"/>
+		<DataField name="mother_age" optype="continuous" dataType="double"/>
+		<DataField name="father_age" optype="continuous" dataType="double"/>
+		<DataField name="gestation_weeks" optype="continuous" dataType="double"/>
+		<DataField name="ever_born" optype="continuous" dataType="double"/>
+		<DataField name="mother_married" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<RegressionModel functionName="regression">
+		<MiningSchema>
+			<MiningField name="weight_pounds" usageType="target"/>
+			<MiningField name="year"/>
+			<MiningField name="plurality"/>
+			<MiningField name="apgar_5min"/>
+			<MiningField name="mother_age"/>
+			<MiningField name="father_age"/>
+			<MiningField name="gestation_weeks"/>
+			<MiningField name="ever_born"/>
+			<MiningField name="mother_married"/>
+		</MiningSchema>
+		<RegressionTable intercept="5.076782317568124">
+			<NumericPredictor name="year" coefficient="0.0012656041650449344"/>
+			<NumericPredictor name="plurality" coefficient="-1.8750325422780079"/>
+			<NumericPredictor name="apgar_5min" coefficient="0.0016760475243616279"/>
+			<NumericPredictor name="mother_age" coefficient="0.0313986509609348"/>
+			<NumericPredictor name="father_age" coefficient="-0.004503044279362895"/>
+			<NumericPredictor name="gestation_weeks" coefficient="0.009075017066026881"/>
+			<NumericPredictor name="ever_born" coefficient="0.022060741074081937"/>
+			<NumericPredictor name="mother_married" coefficient="0.35040321172041267"/>
+		</RegressionTable>
+	</RegressionModel>
+</PMML>
