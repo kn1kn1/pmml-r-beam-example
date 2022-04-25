@@ -1,4 +1,5 @@
 import com.google.common.io.Resources;
+import jakarta.xml.bind.JAXBException;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.options.Description;
@@ -10,12 +11,11 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.PTransform;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
 import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +37,7 @@ public class PmmlRegressionPipeline {
      * Creates and runs a pipeline that reads data from csv file, applies a PMML model to make
      * a prediction, and write the results to csv file.
      */
-    public static void main(String[] args) throws JAXBException, SAXException, IOException {
+    public static void main(String[] args) throws JAXBException, SAXException, IOException, ParserConfigurationException {
         // create the data flow pipeline
         Options options = PipelineOptionsFactory.fromArgs(args).withValidation().as(Options.class);
         Pipeline pipeline = Pipeline.create(options);
@@ -67,24 +67,24 @@ public class PmmlRegressionPipeline {
                             @ProcessElement
                             public void processElement(ProcessContext c) throws Exception {
                                 String line = c.element();
-                                if (line.contains(COLUMN_NAMES[0])) {
+                                if (line == null || line.contains(COLUMN_NAMES[0])) {
                                     return;
                                 }
 
                                 String[] parts = line.split(",");
                                 // create a map of inputs for the pmml model
-                                HashMap<FieldName, Double> inputs = new HashMap<>();
+                                HashMap<String, Double> inputs = new HashMap<>();
                                 for (int i = 0; i < COLUMN_NAMES.length; i++) {
                                     String key = COLUMN_NAMES[i];
                                     if (key.equals(TARGET_COLUMN)) {
                                         continue;
                                     }
 
-                                    inputs.put(FieldName.create(key), Double.parseDouble(parts[i]));
+                                    inputs.put(key, Double.parseDouble(parts[i]));
                                 }
 
                                 // get the estimate
-                                Double estimate = (Double) evaluator.evaluate(inputs).get(FieldName.create(TARGET_COLUMN));
+                                Double estimate = (Double) evaluator.evaluate(inputs).get(TARGET_COLUMN);
 
                                 // create a table row with the prediction
                                 String result = line + "," + estimate.toString();
